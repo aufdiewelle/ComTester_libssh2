@@ -4,18 +4,18 @@
 
 # C++ objects and build libs
 #/include
-/lib
+#/lib
 #/bin
-*.slo
-*.lo
-*.o
-*.a
-*.la
-*.lai
-*.so
-*.so.1
+#*.slo
+#*.lo
+#*.o
+#*.a
+#*.la
+#*.lai
+#*.so
+#*.so.1
 #*.dll
-*.dylib
+#*.dylib
 
 # Qt-es
 /.qmake.cache
