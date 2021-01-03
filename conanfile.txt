@@ -1,0 +1,113 @@
+##############################################################################
+# 28.01.2017, mislin create file
+# 	current lib versions are:
+# 		- libssh2 v1.8.0
+#		- OpenSSL v1.0.2i
+#		- zlib v1.2.8
+# 
+# 24.05.2017, mislin update libs
+# 	current lib versions are:
+# 		- libssh2 v1.8.0
+#		- OpenSSL v1.0.2k
+#		- zlib v1.2.11
+#
+# 	-	update for current lib versions because 
+# 		libssh2/1.8.0@Wi3ard/stable is linked to
+# 		OpenSSL v1.0.2i and zlib v1.2.8
+# 
+# 02.06.2017, mislin correct [options]
+#	just libssh2 will build as dyn. lib, because
+#	OpenSSL and zlib are not needed as dyn. lib.
+#
+# 30.12.2020, mislin update libs for x86_64
+# 	current lib versions are:
+# 		- libssh2 v1.9.0
+#		- OpenSSL v1.11i
+#		- zlib v1.2.11
+#
+#	tested @ 30.12.2020 by mislin
+##############################################################################
+
+[requires]
+libssh2/1.9.0			
+openssl/1.1.1i
+zlib/1.2.11
+
+[generators]			# compiler which should used to link
+# Note:
+# package manager is depending of IDE
+qmake
+#cmake
+
+[options]			# link lib static od dynamic
+# Note:
+# If lib "OpenSSL" & "zlib" is NOT set on ":shared=True" they will build as a 
+# static lib .a (linux,mac,ios) or .lib (windows). Lib "libssh2" is set on 
+# ":shared=True" because it is needed as dyn. lib. When "libssh2.*" is builded
+# the static "OpenSSL.*" & "zlib.*" will be static linkted into "libssh2.*"
+#
+# A static library(.a) or (.lib) is a library that can be linked directly into the 
+# final executable produced by the linker,it is contained in it and there is no need 
+# to have the library into the system where the executable will be deployed.
+#
+# A shared library(.so), (.dylib) or (.dll) is a library that is linked but not embedded
+# in the final executable, so will be loaded when the executable is launched and need 
+# to be present in the system where the executable is deployed. See following link:
+# 
+#
+# A dynamic link library on windows(.dll) is like a shared library(.so) on linux or a 
+# dynamic library(.dylib) on mac os but there are some differences between the two 
+# implementations that are related to the OS (Windows vs Linux):
+#
+#   A DLL can define two kinds of functions: exported and internal. The exported 
+#   functions are intended to be called by other modules, as well as from within 
+#   the DLL where they are defined. Internal functions are typically intended to 
+#   be called only from within the DLL where they are defined.
+#
+#   An SO library on Linux doesn't need special export statement to indicate exportable 
+#   symbols, since all symbols are available to an interrogating process.
+
+# @ Windows: build dyn. lib file libssh2.dll
+# @ Linux: build dyn. lib file libssh2.so
+# @ Mac: build dyn. lib file ?
+libssh2:shared=True	
+
+# @ Windows: build dyn. lib file libeay32.dll & ssleay32.dll
+# @ Linux: build static lib file libcrypto.so & libssl.so
+# @ Mac: 
+OpenSSL:shared=True
+
+# @ Windows: build dyn. lib file zlib.dll
+# @ Linux: build static lib file zlib.so
+# @ Mac: 
+#zlib:shared=True
+
+[imports]			# copy files into project directory
+# Note:
+# You can explore the package folder in your local cache (~/.conan/data) and 
+# look where the shared libraries are. It is common that *.dll are copied in 
+# /bin the rest of the libraries *.a & *.dylib should be found in the /lib 
+# folder. But it is just a convention, different layouts are possible.
+#
+# To find lib files go to local cache and search for lib files acc. OS(*.dll / *.so / *.dylib)
+# Local cache @ Windows: 	C:\Users\<my user name>\.conan\data\
+# Local cache @ Linux:		/home/<my user name>/.conan/data/
+# Local cache @ Mac:		?
+
+# @ all OS
+include, libssh2.h -> ./include
+#include, libssh2_publickey.h -> ./include
+#include, libssh2_sftp.h -> ./include
+#include/openssl, ssl.h -> ./include
+
+# @ Windows OS copy lib files *.dll from directroy /bin into project directory ./lib
+#bin, *.dll -> ./bin
+bin, libssh2.dll -> ./bin
+
+# @ Linux OS copy lib files *.a from directroy /lib into project directory ./lib 
+lib, *.so -> ./lib
+lib, *.so.1 -> ./lib
+
+# @ Mac OS copy lib files *.dylib from directroy /lib into project directory ./lib 
+lib, *.dylib -> ./lib
+lib, *.1.dylib -> ./lib
