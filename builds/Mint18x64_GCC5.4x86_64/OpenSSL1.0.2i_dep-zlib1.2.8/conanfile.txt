@@ -1,0 +1,30 @@
+[requires]			
+OpenSSL/1.0.2i@lasote/stable
+
+[generators]			# compiler which should used to link
+qmake
+
+[options]			# link lib static od dynamic
+# @ Windows: build dyn. lib file libeay32.dll & ssleay32.dll
+# @ Linux: build static lib file libcrypto.so & libssl.so
+# @ Mac: 
+OpenSSL:shared=True
+
+[imports]			# copy files into project directory
+# Special @ Windows:
+# Local cache @ Windows: 	C:\.conan\<random_build_id>\1\bin
+
+# @ all OS
+include, libssh2.h -> ./include
+include/openssl, ssl.h -> ./include
+include, zlib.h ->./include
+
+# @ Windows OS copy lib files *.dll from directroy /bin into project directory ./lib
+bin, *.dll -> ./bin
+ 
+# @ Linux OS copy lib files *.a from directroy /lib into project directory ./lib 
+lib, *.so -> ./lib
+lib, *.so.1 -> ./lib
+
+# @ Mac OS copy lib files *.dylib from directroy /lib into project directory ./lib 
+lib, *.dylib -> ./lib #TODO: Test if it is working with Mac OS

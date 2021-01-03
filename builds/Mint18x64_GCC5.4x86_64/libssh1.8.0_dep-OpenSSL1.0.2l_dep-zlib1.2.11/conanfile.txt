@@ -1,0 +1,43 @@
+[requires]			
+libssh2/1.8.0@Wi3ard/stable 	# linked to old OpenSSL v1.0.2i and zlib v1.2.8
+OpenSSL/1.0.2l@conan/stable	# overwrite v1.0.2i from libssh2/1.8.0@Wi3ard/stable  
+zlib/1.2.11@conan/stable	# overwrite v1.2.8 from libssh2/1.8.0@Wi3ard/stable 
+
+[generators]			# compiler which should used to link
+qmake
+
+[options]			# link lib static od dynamic
+# @ Windows: build dyn. lib file libssh2.dll
+# @ Linux: build dyn. lib file libssh2.so
+# @ Mac: build dyn. lib file ?
+libssh2:shared=True	
+
+# @ Windows: build dyn. lib file libeay32.dll & ssleay32.dll
+# @ Linux: build static lib file libcrypto.so & libssl.so
+# @ Mac: 
+OpenSSL:shared=True
+
+# @ Windows: build dyn. lib file zlib.dll
+# @ Linux: build static lib file zlib.so
+# @ Mac: 
+zlib:shared=True
+
+[imports]			# copy files into project directory
+# Special @ Windows:
+# @ libssh2/1.8.0@Wi3ard/stable: libssh2.* will be copied to 
+# Local cache @ Windows: 	C:\.conan\<random_build_id>\1\bin
+
+# @ all OS
+include, libssh2.h -> ./include
+include/openssl, ssl.h -> ./include
+include, zlib.h ->./include
+
+# @ Windows OS copy lib files *.dll from directroy /bin into project directory ./lib
+bin, *.dll -> ./bin
+ 
+# @ Linux OS copy lib files *.a from directroy /lib into project directory ./lib 
+lib, *.so -> ./lib
+lib, *.so.1 -> ./lib
+
+# @ Mac OS copy lib files *.dylib from directroy /lib into project directory ./lib 
+lib, *.dylib -> ./lib #TODO: Test if it is working with Mac OS
